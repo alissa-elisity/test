@@ -1,0 +1,36 @@
+set +o history
+history -cw
+truncate -s0 /etc/hosts
+rm -vf /etc/netplan/*.yaml
+rm -vf /etc/ssh/ssh_host_*
+rm -vf /var/mail/*
+chmod u+rw /var/lib/systemd/random-seed
+rm -vf /var/lib/systemd/random-seed
+rm -vrf /var/backups/*;
+rm -vf /etc/shadow- /etc/passwd- /etc/group- /etc/gshadow- /etc/subgid- /etc/subuid-
+
+rm -rvf /tmp/*
+rm -rvf /var/tmp/*
+apt update && apt upgrade && apt autoremove && apt clean
+rm -fv /root/.cache
+rm -fv /root/snap
+rm -fv /home/ubuntu/.cache
+
+truncate -s0 /home/ubuntu/.ssh/authorized_keys
+truncate -s0 /etc/machine-id
+rm -vf /var/lib/dbus/machine-id
+ln -s /etc/machine-id /var/lib/dbus/machine-id
+cloud-init clean
+service rsyslog stop
+find /var/log -type f -name "*.[gx]z" -exec rm -vf \{\} \;
+find /var/log -type f -name "*.json" -exec rm -vf \{\} \;
+find /var/log -type f -name "*.conf" -exec rm -vf \{\} \;
+find /var/log -type f -regex ".*\.[0-9]+" -exec rm -vf \{\} \;
+find /var/log -type f -regex ".*\.[0-9]+\.log" -exec rm -vf \{\} \;
+find /var/log -type f -exec truncate -s0 \{\} \;
+truncate -s0 /home/ubuntu/.bash_history
+truncate -s0 /root/.bash_history
+dd if=/dev/zero of=/EMPTY bs=1M > /dev/null
+sync
+rm -vf /EMPTY
+sync
