@@ -1,12 +1,8 @@
 echo "Turn off history and clear it"
 set +o history
 history -cw
-truncate -s0 /home/{{ vm_default_username }}/.bash_history
+truncate -s0 /home/ubuntu/.bash_history
 truncate -s0 /root/.bash_history
-
-echo "Clean any firewall rules"
-ufw --force reset
-rm -vf /etc/ufw/*.rules.*
 
 echo "Truncate hosts"
 truncate -s0 /etc/hosts
@@ -34,10 +30,10 @@ apt autoremove && apt clean
 echo "Remove user cache directories"
 rm -frv /root/.cache
 rm -frv /root/snap
-rm -frv /home/{{ vm_default_username }}/.cache
+rm -frv /home/ubuntu/.cache
 
-echo "Remove authorized keys"
-truncate -s0 /home/{{ vm_default_username }}/.ssh/authorized_keys
+# echo "Remove authorized keys"
+truncate -s0 /home/ubuntu/.ssh/authorized_keys
 
 echo "Remove machine-id"
 truncate -s0 /etc/machine-id
@@ -55,7 +51,7 @@ journalctl --user --flush --rotate --vacuum-time=1s
 find /var/log/installer -type l -exec rm -vf \{\} \;
 find /var/log -type f \( -name "*.[gx]z" -o -name "*.json" -o -name "*.conf" \) -exec rm -vf \{\} \;
 find /var/log -type f \( -regex ".*\.[0-9]+" -o -regex ".*\.[0-9]+\.log" \) -exec rm -vf \{\} \;
-find /var/log -type f \( -name "*log" -o -name "*.txt" -o -name "media-info" -o -name "btmp" -o -name "wtmp" -o -name "dmesg"\) -exec truncate -s0 \{\} \;
+find /var/log -type f \( -name "*log" -o -name "*.txt" -o -name "media-info" -o -name "btmp" -o -name "wtmp" -o -name "dmesg" \) -exec truncate -s0 \{\} \;
 find /var/lib/docker/containers -type f -name "*-json.log" -exec truncate -s0 \{\} \;
 
 echo "Remove temp files"
@@ -69,7 +65,7 @@ rm -vf /EMPTY
 sync
 
 echo "Remove this file"
-rm {{ cleanup_script }}
+rm /root/clean.sh
 
 echo "Shutting down"
 shutdown now
